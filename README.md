@@ -38,7 +38,8 @@ Our JWT will be sent in the **body** of an **HTTP POST** rather than in an Autho
 
 **DstPlatform will respond** to valid JWT from DstClient **with its own JWT**, **signed** with the **same shared secret**, containing a payload with a **"body" private claim**, e.g.
 
-```{
+```
+{
   "iss": "DstPlatform",
   "sub": "LogIn",
   "aud": "DstClient",
@@ -50,7 +51,8 @@ Our JWT will be sent in the **body** of an **HTTP POST** rather than in an Autho
     "UserAuthToken": "seyQeJlAWE5EBX3UL1d7",
     "UserRefreshToken": "yhoWtYxqnw0fc5Oi6Gor"
   }
-}```
+}
+```
 
 ## Setup
 1. Install the 
