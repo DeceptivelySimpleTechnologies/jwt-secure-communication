@@ -30,6 +30,28 @@ Our JWT **payload** sections will also contain a "**body**" **private claim**, c
 
 This results in a 457-character JWT: ```eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkRzdFBsYXRmb3JtLTAwMS1ERVYifQ.eyJpc3MiOiJEc3RDbGllbnQiLCJzdWIiOiJMb2dJbiIsImF1ZCI6IkRzdFBsYXRmb3JtIiwiZXhwIjoiMTY0MDk5NTMyMCIsImlhdCI6IjE2NDA5OTUyMDAiLCJuYmYiOiIxNjQwOTk1MjAwIiwianRpIjoiODU2YTNjMTAtOGM1NC00ZjBkLTllMzAtZWVjOTUzZmFmYmYzIiwiYm9keSI6eyJVc2VyRW1haWxBZGRyZXNzIjoiYW5keS5hbmRlcnNvbkBleGFtcGxlLmNvbSIsIlVzZXJQYXNzd29yZEhhc2giOiJ2M3Q1dnNMTXJ0ZE16c2lsZ1d5cCJ9fQ.Nbu0IsDAjnNw8xZMA9GPudpKhdEEgB5EwTSBYkNatas```
 
+While JWTs can be **encrypted** (rather than just signed) using the shared secret key, encrypting the JWT may not be necessary unless it contains sensitive information because the **HTTP communication channel** over which requests and responses will be sent **should always be secured with** Transport Layer Security (**TLS**) cryptographic protocol. Note: This means that all communication between systems must be secured with TLS.
+
+Each system (DstClient, DstPlatform) must **validate** the JWTs it receives. This includes **rejecting JWT with missing signature**, validating the **JWT signature contents**, **rejecting expired JWT** and **JWT with lifetimes greater 2 minutes**, **rejecting duplicate JWT** (based on the jti claim), validating the **JWT payload contents**. DstPlatform may also validate JWT size (< 1,000 characters) due to workflow engine restrictions on data element length, but this should not be a factor with the limited number of parameters DstClient will be sending in each request.
+      
+Our JWT will be sent in the **body** of an **HTTP POST** rather than in an Authorization: ```Bearer <token>``` HTTP Header record primarily because parsing the contents of request bodies requires less .NET Core custom middleware.
+
+**DstPlatform will respond** to valid JWT from DstClient **with its own JWT**, **signed** with the **same shared secret**, containing a payload with a **"body" private claim**, e.g.
+
+```{
+  "iss": "DstPlatform",
+  "sub": "LogIn",
+  "aud": "DstClient",
+  "exp": "1640995320",
+  "iat": "1640995321",
+  "nbf": "1640995201",
+  "jti": "1406f626-aa3c-4f66-8c7e-419611efd1e2",
+  "body": {
+    "UserAuthToken": "seyQeJlAWE5EBX3UL1d7",
+    "UserRefreshToken": "yhoWtYxqnw0fc5Oi6Gor"
+  }
+}```
+
 ## Setup
 1. Install the 
 
