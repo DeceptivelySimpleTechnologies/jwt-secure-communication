@@ -1,4 +1,4 @@
-# README jwt-handling
+# README jwt-secure-communication
 
 ## Purpose
 This is the Deceptively Simple Technologies (DST) JSON Web Token (JWT) Secure Communication Standard, which defines and utilizes open standards and a code library to **represent, sign, and transmit information securely** between two parties as JSON (JavaScript Object Notation) objects.
@@ -20,11 +20,15 @@ Note: There is an older package called JsonWebTokens (plural), which should NOT 
 
 We will use **shared secrets** generated with the HMAC-SHA256 algorithm to digitally sign our JWTs, rather than an asymmetric public/private key pair generated using RSA or ECDSA algorithms due to related weaknesses in many several third-party libraries. Our JWTs will consist of Bas e64Url-encoded (to remove spaces and problematic punctuation) header and payload and the 256-bit shared secret signature sections (please see the examples below), separated by the dot (.) character, i.e. HEADER_DATA.PAYLOAD_DATA.SIGNATURE_DATA These signed JWTs can verify the integrity of the information they contain because the signature is calculated using the header and the payload data as inputs.
 
-Our JWT **header** sections will contain the "alg" (cryptographic algorithm used in the signature) property (defined in RFC 7519) and the optional "**k id**" (key id) header parameter (defined in RFC7515) to facilitate coordinating shared secret (key) changes (please see the example below).
+Our JWT **header** sections will contain the "alg" (cryptographic algorithm used in the signature) property (defined in RFC 7519), the "**typ**" property, and the "**kid**" (key id) header parameter (defined in RFC7515) to facilitate coordinating shared secret (key) changes (please see the example below).
 
-Our JWT payload sections will contain the "**iss**" (Issuer), "**sub**" (Subject), "**aud**" (Audience), "**exp**" (Expiration Time in number of seconds from 1970-01-01T00:00:00Z UTC until the specified UTC date/time, ignoring leap seconds or "Seconds Since the Epoch, defined in IEEE Std 1003.1 2013 Edition [POSIX.1]), "**iat**" (Issued At also in in number of seconds from 1970-01-01T00:00:00Z UTC, etc), "**nbf**" (Not Before also in in number of seconds from 1970-01-01T00:00:00Z UTC, etc), and "**jti**" (JWT UUID) registered claims – predefined claims that are not mandatory but recommended (please see the example below).
+Our JWT payload sections will contain the "**iss**" (Issuer), "**sub**" (Subject), "**aud**" (Audience), "**exp**" (Expiration Time in number of seconds from 1970-01-01T00:00:00Z UTC until the specified UTC date/time, ignoring leap seconds or "Seconds Since the Epoch, defined in IEEE Std 1003.1 2013 Edition [POSIX.1]), "**iat**" (Issued At also in in number of seconds from 1970-01-01T00:00:00Z UTC, etc), "**nbf**" (Not Before also in in number of seconds from 1970-01-01T00:00:00Z UTC, etc), and "**jti**" (JWT UUID) **registered claims** – predefined claims that are not mandatory but recommended (please see the example below).
 
-This results in a 288-character JWT: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJEc3RDbGllbnQiLCJzdWIiOiJMb2dJbiIsImF1ZCI6IkRzdFBsYXRmb3JtIiwiZXhwIjoiMTY0MDk5NTMyMCIsImlhdCI6IjE2NDA5OTUyMDAiLCJuYmYiOiIxNjQwOTk1MjAwIiwianRpIjoiODU2YTNjMTAtOGM1NC00ZjBkLTllMzAtZWVjOTUzZmFmYmYzIn0.OeFhpjGPd89W6gtiVlCHUVqGwcveeXoa-b_DUguRDpA
+This results in a 326-character JWT: ```eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkRzdFBsYXRmb3JtLTAwMS1ERVYifQ.eyJpc3MiOiJEc3RDbGllbnQiLCJzdWIiOiJMb2dJbiIsImF1ZCI6IkRzdFBsYXRmb3JtIiwiZXhwIjoiMTY0MDk5NTMyMCIsImlhdCI6IjE2NDA5OTUyMDAiLCJuYmYiOiIxNjQwOTk1MjAwIiwianRpIjoiODU2YTNjMTAtOGM1NC00ZjBkLTllMzAtZWVjOTUzZmFmYmYzIn0.N0OKTlktU_4ejvTGEu1xtWpxjmKmYdJM0faHQIn8Oks```
+
+Our JWT **payload** sections will also contain a "**body**" **private claim**, containing the business process request parameters, which will be passed to the workflow model and decision engine (please see the example below).
+
+This results in a 457-character JWT: ```eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkRzdFBsYXRmb3JtLTAwMS1ERVYifQ.eyJpc3MiOiJEc3RDbGllbnQiLCJzdWIiOiJMb2dJbiIsImF1ZCI6IkRzdFBsYXRmb3JtIiwiZXhwIjoiMTY0MDk5NTMyMCIsImlhdCI6IjE2NDA5OTUyMDAiLCJuYmYiOiIxNjQwOTk1MjAwIiwianRpIjoiODU2YTNjMTAtOGM1NC00ZjBkLTllMzAtZWVjOTUzZmFmYmYzIiwiYm9keSI6eyJVc2VyRW1haWxBZGRyZXNzIjoiYW5keS5hbmRlcnNvbkBleGFtcGxlLmNvbSIsIlVzZXJQYXNzd29yZEhhc2giOiJ2M3Q1dnNMTXJ0ZE16c2lsZ1d5cCJ9fQ.Nbu0IsDAjnNw8xZMA9GPudpKhdEEgB5EwTSBYkNatas```
 
 ## Setup
 1. Install the 
